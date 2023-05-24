@@ -1,0 +1,24 @@
+#!/bin/bash
+echo "config use default
+admin --admin-url http://localhost:8090 topics delete tkv_j_j
+client produce --key-value-encoding-type separated -f $HOME/dev/localscripts/demos/flink/json-message.json -k '{\"key_field1\":\"k1\"}' -ks 'json:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"key_field1\", \"type\": \"string\" }]}' -vs 'json:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"field1\", \"type\": \"string\" }, { \"name\": \"field2\", \"type\": \"int\" }]}' tkv_j_j
+" | pulsar-shell - 
+
+CREATE TABLE tkv_j_j (
+    field2 int,
+    field1 STRING,
+    key_field1 STRING,
+    `event_time` TIMESTAMP(3) METADATA,
+    `message_id` STRING METADATA,
+    `publish_time` STRING METADATA,
+    `properties` MAP<STRING, STRING> METADATA
+) WITH (   
+    'connector' = 'pulsar',   
+    'topics' = 'public/default/tkv_j_j',   
+    'service-url' = 'pulsar://localhost:6650',
+    'admin-url' = 'http://localhost:8090',
+    'format' = 'json',
+    'key.format' = 'json',
+    'key.fields' = 'key_field1' );
+
+SELECT * FROM tkv_j_j;

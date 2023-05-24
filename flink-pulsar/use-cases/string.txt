@@ -1,0 +1,17 @@
+#!/bin/bash
+echo "config use default
+#admin --admin-url http://localhost:8090 topics delete t1
+client produce -m hello -vs string t1
+" | pulsar-shell - 
+
+CREATE TABLE t1 (
+    name STRING,
+    `event_time` TIMESTAMP(3) METADATA,
+    `message_id` STRING METADATA,
+    `publish_time` STRING METADATA,
+    `properties` MAP<STRING, STRING> METADATA
+) WITH (   'connector' = 'pulsar',   'topics' = 'public/default/t1',   'service-url' = 'pulsar://localhost:6650',   
+'admin-url' = 'http://localhost:8090', 'format' = 'raw' );
+
+
+SELECT * FROM t1;
