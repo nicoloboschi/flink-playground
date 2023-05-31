@@ -15,7 +15,7 @@ cd flink-$FLINK_VERSION
 echo "Downloading Flink SQL connector for Pulsar"
 wget https://github.com/streamnative/flink/releases/download/v1.16.0.0/flink-sql-connector-pulsar-1.16.0.0.jar -P lib
 echo "Downloading Avro format support"
-wget https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-avro/1.16.0/flink-sql-avro-1.16.0.jar -P lib
+wget https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-avro/$FLINK_VERSION/flink-sql-avro-$FLINK_VERSION.jar -P lib
 
 
 
