@@ -1,0 +1,31 @@
+#!/bin/bash
+
+curl --output /tmp/avro-tools.jar https://dlcdn.apache.org/avro/avro-1.11.1/java/avro-tools-1.11.1.jar
+export SCHEMA='{"type":"record","namespace":"com.example","name":"json","fields":[{ "name":"field1", "type": "string" }, { "name":"field2", "type": "int" }]}'
+export KEY_SCHEMA='{"type":"record","namespace":"com.example","name":"json","fields":[{ "name":"key_field1", "type": "string" }]}'
+java -jar /tmp/avro-tools.jar jsontofrag "$SCHEMA" use-cases/json-message.json > /tmp/avro-message.avro
+java -jar /tmp/avro-tools.jar jsontofrag "$KEY_SCHEMA" use-cases/json-key.json > /tmp/avro-message-key.avro
+
+
+echo "config use default
+#admin --admin-url http://localhost:8090 topics delete tkv_a_a
+client produce --key-value-encoding-type separated -f /tmp/avro-message.avro -kf /tmp/avro-message-key.avro -ks 'avro:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"key_field1\", \"type\": \"string\" }]}' -vs 'avro:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"field1\", \"type\": \"string\" }, { \"name\": \"field2\", \"type\": \"int\" }]}' tkv_a_a
+" | ~/dev/pulsar/bin/pulsar-shell - 
+
+CREATE TABLE tkv_a_a (
+    keyfield1 STRING NOT NULL,
+    field1 STRING NOT NULL,
+    field2 int NOT NULL,
+    `publish_time` STRING METADATA,
+    `properties` MAP<STRING, STRING> METADATA
+) WITH (   
+    'connector' = 'pulsar',   
+    'topics' = 'public/default/tkv_a_a',   
+    'service-url' = 'pulsar://localhost:6650',
+    'admin-url' = 'http://localhost:8090',
+    'format' = 'avro',
+    'key.format' = 'avro',
+    'key.fields' = 'keyfield1' );
+
+
+SELECT * FROM tkv_a_a;
