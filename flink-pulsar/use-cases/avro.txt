@@ -14,16 +14,6 @@ admin --admin-url http://localhost:8090 schemas get tavro
 CREATE TABLE tavro (
     field1 STRING NOT NULL,
     field2 int NOT NULL,
-    
-) WITH (   'connector' = 'pulsar',   'topics' = 'public/default/tavro',   'service-url' = 'pulsar://localhost:6650',   
-'admin-url' = 'http://localhost:8090', 'format' = 'avro' );
-
-
-CREATE TABLE tavro (
-    field1 STRING,
-    field2 int,
-    `event_time` TIMESTAMP(3) METADATA,
-    `message_id` STRING METADATA,
     `publish_time` STRING METADATA,
     `properties` MAP<STRING, STRING> METADATA
 ) WITH (   'connector' = 'pulsar',   'topics' = 'public/default/tavro',   'service-url' = 'pulsar://localhost:6650',   
