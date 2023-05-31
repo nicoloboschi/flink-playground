@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "config use default
 #admin --admin-url http://localhost:8090 topics delete tj
-client produce -f $HOME/dev/localscripts/demos/flink/json-message.json -vs 'json:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"field1\", \"type\": \"string\" }, { \"name\": \"field2\", \"type\": \"int\" }]}' tj
+client produce -f use-cases/json-message.json -vs 'json:{\"type\":\"record\",\"namespace\":\"com.example\",\"name\":\"json\",\"fields\":[{ \"name\":\"field1\", \"type\": \"string\" }, { \"name\": \"field2\", \"type\": \"int\" }]}' tj
 " | pulsar-shell - 
 
 CREATE TABLE tj (
@@ -12,6 +12,6 @@ CREATE TABLE tj (
     `publish_time` STRING METADATA,
     `properties` MAP<STRING, STRING> METADATA
 ) WITH (   'connector' = 'pulsar',   'topics' = 'public/default/tj',   'service-url' = 'pulsar://localhost:6650',   
-'admin-url' = 'http://localhost:8090', 'format' = 'avro' );
+'admin-url' = 'http://localhost:8090', 'format' = 'json' );
 
 SELECT * FROM tj;

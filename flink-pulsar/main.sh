@@ -17,14 +17,14 @@ start_pulsar() {
     export PULSAR_PREFIX_brokerDeleteInactiveTopicsEnabled=false &&
     bin/apply-config-from-env.py /pulsar/conf/standalone.conf &&
     ./bin/pulsar standalone --wipe-data -nss -nfw"""
-
+    sleep 5
     echo "config use default
     admin --admin-url http://localhost:8090 namespaces create public/flink
     " | pulsar-shell - 
 }
 start_flink() {
     cd $work_dir
-    cd flink-1.16.1
+    cd flink-1.16.2
     ./bin/start-cluster.sh
     ./bin/sql-client.sh
 }
